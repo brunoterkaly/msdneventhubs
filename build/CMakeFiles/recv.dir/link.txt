@@ -1,0 +1,1 @@
+/usr/bin/cc      CMakeFiles/recv.dir/recv.o  -o recv -rdynamic -lqpid-proton 

@@ -1,0 +1,2 @@
+/home/azureuser/dev/qpid-proton-0.8/examples/messenger/c/build/CMakeFiles/recv.dir
+/home/azureuser/dev/qpid-proton-0.8/examples/messenger/c/build/CMakeFiles/send.dir

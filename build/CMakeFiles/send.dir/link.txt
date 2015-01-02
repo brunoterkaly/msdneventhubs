@@ -1,0 +1,1 @@
+/usr/bin/cc      CMakeFiles/send.dir/send.o  -o send -rdynamic -lqpid-proton 
