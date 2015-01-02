@@ -54,9 +54,9 @@ int sendMessage(pn_messenger_t * messenger, int month, char *f1, char *f2)
 {
     // string from portal
     // Endpoint=sb://brunoeventhub-ns.servicebus.windows.net/;SharedAccessKeyName=SendRule;
-    // SharedAccessKey=V0Plw5UIRzpwg16tNXwpbBA/LU6qAX3t54YXjIQYgy8=
+    // SharedAccessKey=[secret code]
 
-    char * address = (char *) "amqps://SendRule:V0Plw5UIRzpwg16tNXwpbBA%2FLU6qAX3t54YXjIQYgy8%3D@brunoeventhub-ns.servicebus.windows.net/brunoeventhub";
+    char * address = (char *) "amqps://SendRule:[secret code]@brunoeventhub-ns.servicebus.windows.net/brunoeventhub";
 
     int n = sprintf (msgbuffer, "%s,%d,%s", f1, month, f2);
     pn_message_t * message;
