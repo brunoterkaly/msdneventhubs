@@ -13,8 +13,6 @@
 
 #include <dirent.h>
 
-
-
 //#define MYDEBUG
 
 char msgbuffer [2048];
@@ -79,108 +77,6 @@ int sendMessage(pn_messenger_t * messenger, int month, char *f1, char *f2)
 
 
 
-void list_tree(const char *name, int level)
-{
-    DIR *dir;
-    struct dirent *entry;
-
-    if (!(dir = opendir(name)))
-        return;
-    if (!(entry = readdir(dir)))
-        return;
-
-    do {
-        if (entry->d_type == DT_DIR) 
-        {
-            char path[1024];
-            int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
-            path[len] = 0;
-            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-                continue;
-            printf("%*s[%s]\n", level*2, "", entry->d_name);
-            list_tree(path, level + 1);
-        }
-        else
-            printf("%*s- %s\n", level*2, "", entry->d_name);
-    } while (entry = readdir(dir));
-    closedir(dir);
-}
-
-
-#if 0
-void list_files(const char *name, int level, pn_messenger_t *messenger)
-{
-    DIR *dir;
-    struct dirent *entry;
-    char path[1024];
-
-    if (!(dir = opendir(name)))
-        return;
-    if (!(entry = readdir(dir)))
-        return;
-
-    do {
-        if (entry->d_type == DT_DIR) 
-        {
-            int len = snprintf(path, sizeof(path)-1, "%s/%s", name, entry->d_name);
-            path[len] = 0;
-            if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
-                continue;
-            //printf("%*s[%s]\n", level*2, "", entry->d_name);
-            list_files(path, level + 1, messenger);
-        }
-        else
-        {
-
-            char * address = (char *) "amqps://SendRule:V0Plw5UIRzpwg16tNXwpbBA%2FLU6qAX3t54YXjIQYgy8%3D@brunoeventhub-ns.servicebus.windows.net/brunoeventhub";
-            sendMessage(messenger);
-            //int n=sprintf (msgbuffer, "Hello from C!, Msg #%d", a++);
-
-            pn_message_t * message;
-            pn_data_t * body;
-            message = pn_message();
-#ifdef MYDEBUG
-            printf("Made it here\n");
-#endif
-
-            pn_message_set_address(message, address);
-            pn_message_set_content_type(message, (char*) "application/octect-stream");
-    pn_message_set_inferred        (message, true);
-#ifdef MYDEBUG
-            printf("Made it here #2\n");
-#endif
- 
-            body = pn_message_body(message);
-            sprintf(msgbuffer, "%s/%s\n", name, entry->d_name);
-            pn_data_put_binary(body, pn_bytes(strlen(msgbuffer), msgbuffer));
-#ifdef MYDEBUG
-            printf("Made it here #3\n");
-#endif
-
-            pn_messenger_put(messenger, message);
-#ifdef MYDEBUG
-            printf("Made it here #4\n");
-#endif
-            check(messenger);
-            pn_messenger_send(messenger, 1);
-#ifdef MYDEBUG
-            printf("Made it here #5\n");
-#endif
-            check(messenger);
-
-            pn_message_free(message);
-
-
-            // Print the filename to the screen
-            printf("%s/%s\n", name, entry->d_name);
-      }
-    } while (entry = readdir(dir));
-    closedir(dir);
-}
-#endif
-
-
-
 int main(int argc, char** argv) 
 {
     printf("Press Ctrl-C to stop the sender process\n");
@@ -235,29 +131,5 @@ int main(int argc, char** argv)
     pn_messenger_stop(messenger);
     pn_messenger_free(messenger);
 
-    //list_tree("/", 0);
-
-    /**********************************************************
-    TEMP EXIT
-    **********************************************************/
-    exit(-1);
-#if 0
-    char localbuffer[100];
-    pn_messenger_t *messenger = pn_messenger(NULL);
-    pn_messenger_set_outgoing_window(messenger, 1);
-    pn_messenger_start(messenger);
-
-    while(true) {
-        sendMessage(messenger);
-        sprintf(localbuffer, "Sent Message = %s\n", msgbuffer);
-        printf(localbuffer);
-        waitms(200);
-        //sleep(1);
-    }
-
-    // release messenger resources
-    pn_messenger_stop(messenger);
-    pn_messenger_free(messenger);
-#endif
     return 0;
 }
