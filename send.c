@@ -50,11 +50,15 @@ void die(const char *file, int line, const char *message)
 
 int sendMessage(pn_messenger_t * messenger, int month, char *f1, char *f2) 
 {
+
     // string from portal
     // Endpoint=sb://brunoeventhub-ns.servicebus.windows.net/;SharedAccessKeyName=SendRule;
-    // SharedAccessKey=[secret code]
+    // SharedAccessKey=V0Plw5UIRzpwg16tNXwpbBA/LU6qAX3t54YXjIQYgy8=
+    // SharedAccessKey=3steatCSObflHQrOo9rjdG6DEvxT29cKZb8MIdfxBA4=
+    // SharedAccessKey=3steatCSObflHQrOo9rjdG6DEvxT29cKZb8MIdfxBA4%3D
 
-    char * address = (char *) "amqps://SendRule:[secret code]@brunoeventhub-ns.servicebus.windows.net/brunoeventhub";
+    char * address = (char *) "amqps://SendRule:3steatCSObflHQrOo9rjdG6DEvxT29cKZb8MIdfxBA4%3D@temperatureeventhub-ns.servicebus.windows.net/temperatureeventhub";
+
 
     int n = sprintf (msgbuffer, "%s,%d,%s", f1, month, f2);
     pn_message_t * message;
@@ -97,26 +101,30 @@ int main(int argc, char** argv)
 
     while (fgets(line, 512, fp)!=NULL)
     {
-        for (i = 0; line[i] != '\0'; i++)
-        {
-            if (line[i] == ',')
-            {
-                fields[curr_field][trg_col] = '\0';
-                trg_col = 0;
-                curr_field += 1;
-            }
-            else
-            {
-                fields[curr_field][trg_col] = line[i];
-                trg_col += 1;
-    
-            }
+	for (i = 0; line[i] != '\0'; i++)
+	{
+		// if hit comma, finished a field
+		if (line[i] == ',')
+		{
+			fields[curr_field][trg_col] = '\0';
+			//printf("Finished a field, trg_col = %d\n", trg_col);
+			//printf("%s\n", fields[curr_field]);
+			trg_col = 0;
+			curr_field += 1;
+		}
+		else
+		{
+			fields[curr_field][trg_col] = line[i];
+			trg_col += 1;
+
+		}
         }
+        trg_col = 0;
         curr_field = 0;
         for (i = 1; i < 13; i++)
 	{
 	    sendMessage(messenger, i, fields[0], fields[i]);
-            //printf("%s,", fields[i]);
+            printf("%s -> %s\n", fields[0], fields[i]);
 	}
 
         printf("\n");
